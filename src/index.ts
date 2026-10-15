@@ -82,23 +82,15 @@ function renderNotFoundHtml(slug: string, origin: string): Response {
   <link rel="stylesheet" href="/style.css">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 </head>
-<body class="bg-zinc-950 text-zinc-100 min-h-[100dvh] flex items-center justify-center p-4 antialiased">
-  <main class="w-full max-w-md bg-zinc-900/90 border border-zinc-800/80 rounded-2xl p-8 shadow-2xl backdrop-blur-xl text-center">
-    <div class="w-14 h-14 mx-auto mb-6 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
-      <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
-      </svg>
-    </div>
-    <span class="inline-block text-xs font-mono uppercase tracking-wider text-emerald-400 font-semibold mb-2">Error 404</span>
-    <h1 class="text-2xl font-bold tracking-tight text-white mb-3">Tautan Tidak Ditemukan</h1>
-    <p class="text-sm text-zinc-400 leading-relaxed mb-6">
-      Tautan pendek <code class="px-2 py-0.5 rounded bg-zinc-800 text-emerald-300 font-mono text-xs font-medium">/${slug}</code> tidak ada atau telah dihapus oleh pemiliknya.
+<body style="min-height: 100dvh; background: #09090b; color: #f4f4f5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; display: flex; align-items: center; justify-content: center; padding: 1.25rem;">
+  <main style="width: 100%; max-width: 400px; background: #121215; border: 1px solid #232328; border-radius: 10px; padding: 2rem; text-align: center;">
+    <h1 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem; color: #f4f4f5;">Tautan Tidak Ditemukan</h1>
+    <p style="font-size: 0.85rem; color: #a1a1aa; line-height: 1.5; margin-bottom: 1.5rem;">
+      Tautan pendek <code style="font-family: monospace; color: #10b981; padding: 0.1rem 0.35rem; background: #19191e; border-radius: 4px;">/${slug}</code> tidak terdaftar atau telah dihapus.
     </p>
-    <div class="flex flex-col sm:flex-row gap-3 justify-center">
-      <a href="/" class="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-emerald-500 text-zinc-950 font-semibold text-sm hover:bg-emerald-400 transition-colors active:scale-[0.98]">
-        Kembali ke Beranda
-      </a>
-    </div>
+    <a href="/" class="btn btn-primary" style="display: inline-flex; align-items: center; justify-content: center; padding: 0.45rem 1rem; border-radius: 8px; background: #10b981; color: #09090b; font-weight: 600; font-size: 0.825rem; text-decoration: none;">
+      Kembali ke Beranda
+    </a>
   </main>
 </body>
 </html>`;

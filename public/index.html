@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KlipLink - Pemendek Tautan Cepat & Ringkas</title>
-  <meta name="description" content="Layanan pemendek URL modern, aman, dan instan yang berjalan di Cloudflare Workers dan D1 Database.">
+  <title>KlipLink - Pemendek Tautan Cloudflare Workers</title>
+  <meta name="description" content="Layanan pemendek tautan mandiri berbasis Cloudflare Workers dan database D1 SQLite.">
   <link rel="stylesheet" href="/style.css">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 </head>
@@ -13,172 +13,139 @@
   <header class="site-header">
     <div class="container header-inner">
       <a href="/" class="brand">
-        <div class="brand-icon">
-          <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-          </svg>
-        </div>
         <span>KlipLink</span>
+        <span class="brand-badge">worker</span>
       </a>
 
       <div class="nav-actions">
-        <div class="edge-pill">
-          <span class="edge-dot"></span>
-          <span>Cloudflare Edge</span>
+        <div id="userIndicator" class="user-badge" style="display: none;">
+          <span id="usernameDisplay">admin</span>
         </div>
 
-        <button id="navLoginBtn" class="btn btn-secondary btn-sm">
-          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-          </svg>
-          <span id="navLoginText">Masuk Admin</span>
+        <button id="navLoginBtn" class="btn btn-secondary btn-sm" type="button">
+          Masuk Admin
         </button>
 
-        <button id="navLogoutBtn" class="btn btn-secondary btn-sm" style="display: none;">
-          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-          </svg>
-          <span>Keluar</span>
+        <button id="navLogoutBtn" class="btn btn-secondary btn-sm" type="button" style="display: none;">
+          Keluar
         </button>
       </div>
     </div>
   </header>
 
   <!-- Main Content -->
-  <main class="container" style="flex: 1;">
-    <!-- Public Hero & Creator Section -->
-    <section class="hero-section">
-      <div class="hero-badge">
-        <span>Bertenaga Cloudflare Workers + D1</span>
-      </div>
-      <h1 class="hero-title">Tautan Ringkas, Performa Instan</h1>
-      <p class="hero-desc">
-        Persingkat tautan panjang dengan latensi ultra rendah di jaringan global edge Cloudflare. Kelola, pantau jumlah klik, dan kustomisasi slug sesuka Anda.
+  <main class="container main-wrapper">
+    <!-- Page Header (No Eyebrow Badges, Direct Copy) -->
+    <header class="page-intro">
+      <h1 class="page-title">Pemendek Tautan</h1>
+      <p class="page-desc">
+        Buat tautan pendek dengan slug kustom atau acak. Tautan dialihkan langsung melalui Cloudflare Workers dengan penyimpanan D1 SQLite.
       </p>
+    </header>
 
-      <!-- URL Shortener Form -->
-      <div class="creator-card">
-        <form id="createLinkForm">
-          <div class="creator-grid">
-            <div class="form-group" style="margin-bottom: 0;">
-              <label for="inputUrl" class="form-label">URL Tujuan Asli</label>
+    <!-- Shortener Form -->
+    <section class="shortener-panel">
+      <form id="createLinkForm">
+        <div class="shortener-grid">
+          <div class="form-group">
+            <label for="inputUrl" class="form-label">URL Tujuan</label>
+            <input
+              type="url"
+              id="inputUrl"
+              class="form-input"
+              placeholder="https://example.com/halaman-tujuan"
+              required
+              autocomplete="off"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="inputSlug" class="form-label">Slug Kustom (Opsional)</label>
+            <div class="input-prefix-group">
+              <span class="input-prefix">/</span>
               <input
-                type="url"
-                id="inputUrl"
+                type="text"
+                id="inputSlug"
                 class="form-input"
-                placeholder="https://contoh-domain.com/artikel-panjang-sekali"
-                required
+                placeholder="nama-tautan"
+                pattern="[a-zA-Z0-9_-]{2,64}"
+                title="2 sampai 64 karakter (huruf, angka, minus, atau garis bawah)"
                 autocomplete="off"
               />
             </div>
-
-            <div class="form-group" style="margin-bottom: 0;">
-              <label for="inputSlug" class="form-label">Kustom Slug (Opsional)</label>
-              <div class="input-group">
-                <span class="input-prefix" id="slugPrefix">/</span>
-                <input
-                  type="text"
-                  id="inputSlug"
-                  class="form-input"
-                  placeholder="promo-hebat"
-                  pattern="[a-zA-Z0-9_-]{2,64}"
-                  title="2 sampai 64 karakter (huruf, angka, minus, garis bawah)"
-                  autocomplete="off"
-                />
-              </div>
-            </div>
-
-            <div class="form-group" style="margin-bottom: 0; justify-content: flex-end;">
-              <label class="form-label" style="opacity: 0; user-select: none;">Aksi</label>
-              <button type="submit" id="btnSubmitCreate" class="btn btn-primary" style="height: 42px;">
-                <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-                <span>Perpendek URL</span>
-              </button>
-            </div>
           </div>
-        </form>
 
-        <!-- Result Box (Hidden by default, shown after link creation) -->
-        <div id="resultCard" class="result-card">
-          <div class="result-header">
-            <span class="text-accent" style="font-size: 0.85rem; font-weight: 600;">Tautan Berhasil Dibuat!</span>
-            <span id="resultCreatedTime" class="text-dim" style="font-size: 0.75rem;">Baru saja</span>
+          <button type="submit" id="btnSubmitCreate" class="btn btn-primary" style="height: 35px;">
+            Perpendek
+          </button>
+        </div>
+      </form>
+
+      <!-- Result Box -->
+      <div id="resultCard" class="result-box">
+        <div class="result-inner">
+          <div style="display: flex; align-items: center; gap: 0.65rem; min-width: 0;">
+            <span class="text-secondary" style="font-size: 0.8rem;">Tautan dibuat:</span>
+            <a id="resultShortUrl" href="#" target="_blank" rel="noopener noreferrer" class="result-url"></a>
           </div>
-          <div class="result-link-row">
-            <a id="resultShortUrl" href="#" target="_blank" rel="noopener noreferrer" class="result-short-url"></a>
-            <div style="display: flex; gap: 0.5rem; align-items: center;">
-              <button id="btnCopyResult" class="btn btn-primary btn-sm">
-                <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
-                </svg>
-                <span>Salin</span>
-              </button>
-              <button id="btnQrResult" class="btn btn-secondary btn-sm">
-                <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
-                </svg>
-                <span>QR</span>
-              </button>
-            </div>
+          <div style="display: flex; gap: 0.4rem; align-items: center;">
+            <button id="btnCopyResult" class="btn btn-secondary btn-sm" type="button">Salin</button>
+            <button id="btnQrResult" class="btn btn-secondary btn-sm" type="button">QR Code</button>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Admin Dashboard Section -->
-    <section id="adminSection" style="display: none; padding-bottom: 4rem;">
-      <!-- Default Password Alert (Shown if admin uses default admin123) -->
-      <div id="defaultPasswordBanner" style="display: none; margin-bottom: 1.5rem; padding: 0.85rem 1.25rem; border-radius: var(--radius-lg); background-color: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); color: #fbbf24; font-size: 0.85rem;">
-        <strong style="font-weight: 600;">Perhatian Keamanan:</strong> Anda saat ini menggunakan password default <code style="padding: 0.1rem 0.35rem; background: rgba(0,0,0,0.3); border-radius: 4px; font-family: var(--font-mono);">admin123</code>. Mohon perbarui variabel rahasia <code style="padding: 0.1rem 0.35rem; background: rgba(0,0,0,0.3); border-radius: 4px; font-family: var(--font-mono);">ADMIN_PASSWORD</code> di dashboard Cloudflare Anda.
+    <!-- Admin Workbench Section -->
+    <section id="adminSection" style="display: none;">
+      <!-- Default Password Warning -->
+      <div id="defaultPasswordBanner" class="security-banner" style="display: none;">
+        <strong>Pemberitahuan:</strong> Sandi admin masih menggunakan nilai default <code class="font-mono">admin123</code>. Perbarui variabel rahasia <code class="font-mono">ADMIN_PASSWORD</code> melalui Cloudflare Dashboard atau wrangler secret.
       </div>
 
-      <!-- Metrics Overview -->
-      <div class="metrics-grid">
-        <div class="metric-card">
-          <div class="metric-label">Total Tautan</div>
-          <div id="metricTotalLinks" class="metric-value">0</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">Total Klik</div>
-          <div id="metricTotalClicks" class="metric-value">0</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">Rata-Rata Klik</div>
-          <div id="metricAvgClicks" class="metric-value">0</div>
-        </div>
-      </div>
-
-      <!-- Links Management Table -->
-      <div class="table-card">
-        <div class="table-toolbar">
-          <div class="search-box">
-            <svg class="search-icon" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-            <input type="text" id="searchInput" class="form-input" placeholder="Cari slug atau URL tujuan..." />
+      <!-- Links Workbench Table -->
+      <div class="workbench">
+        <div class="workbench-header">
+          <div class="workbench-title-row">
+            <h2 class="workbench-heading">Daftar Tautan</h2>
+            <span id="linkCountBadge" class="count-badge">0 tautan</span>
           </div>
 
-          <div style="display: flex; gap: 0.75rem; align-items: center;">
-            <select id="sortSelect" class="sort-select">
-              <option value="created_desc">Terbaru Dibuat</option>
-              <option value="created_asc">Terlama Dibuat</option>
-              <option value="clicks_desc">Klik Terbanyak</option>
-              <option value="clicks_asc">Klik Tersedikit</option>
+          <div class="workbench-tools">
+            <div class="search-input-wrap">
+              <svg class="search-icon-svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <input type="text" id="searchInput" class="form-input" placeholder="Cari slug atau URL..." />
+            </div>
+
+            <select id="sortSelect" class="sort-dropdown" aria-label="Urutkan tautan">
+              <option value="created_desc">Terbaru</option>
+              <option value="clicks_desc">Klik terbanyak</option>
+              <option value="created_asc">Terlama</option>
             </select>
 
-            <button id="btnRefreshList" class="btn btn-secondary btn-icon" title="Segarkan Data">
-              <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
+            <button id="btnRefreshList" class="btn btn-secondary btn-sm" type="button" title="Segarkan data">
+              Muat Ulang
             </button>
           </div>
         </div>
 
-        <!-- Links Container -->
-        <div id="linksContainer">
-          <!-- Loading skeleton will render here -->
+        <div id="tableContainer">
+          <table class="links-table">
+            <thead>
+              <tr>
+                <th style="width: 28%;">Tautan Pendek</th>
+                <th>URL Tujuan</th>
+                <th style="width: 12%; text-align: right;">Klik</th>
+                <th style="width: 16%;">Dibuat</th>
+                <th style="width: 16%; text-align: right;">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="linksTableBody">
+              <!-- Rendered via app.js -->
+            </tbody>
+          </table>
         </div>
       </div>
     </section>
@@ -188,25 +155,22 @@
   <div id="loginModal" class="modal-backdrop">
     <div class="modal-dialog">
       <div class="modal-header">
-        <h2 class="modal-title">Masuk ke Dasbor Admin</h2>
-        <button type="button" class="modal-close" data-close-modal="loginModal">
-          <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <h2 class="modal-title">Masuk Admin</h2>
+        <button type="button" class="modal-close-btn" data-close-modal="loginModal" aria-label="Tutup">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
       </div>
       <form id="loginForm">
         <div class="modal-body">
-          <p class="text-muted" style="font-size: 0.85rem; margin-bottom: 1.25rem;">
-            Masukkan kata sandi admin untuk mengelola, mengedit slug, atau menghapus tautan yang telah dibuat.
-          </p>
           <div class="form-group">
-            <label for="loginPassword" class="form-label">Kata Sandi Admin</label>
+            <label for="loginPassword" class="form-label">Kata Sandi</label>
             <input
               type="password"
               id="loginPassword"
               class="form-input"
-              placeholder="Masukkan password admin"
+              placeholder="Masukkan kata sandi admin"
               required
               autocomplete="current-password"
             />
@@ -214,10 +178,8 @@
           <div id="loginErrorMsg" style="display: none; color: #f87171; font-size: 0.8rem; margin-top: 0.5rem;"></div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-close-modal="loginModal">Batal</button>
-          <button type="submit" id="btnLoginSubmit" class="btn btn-primary">
-            <span>Masuk</span>
-          </button>
+          <button type="button" class="btn btn-secondary btn-sm" data-close-modal="loginModal">Batal</button>
+          <button type="submit" id="btnLoginSubmit" class="btn btn-primary btn-sm">Masuk</button>
         </div>
       </form>
     </div>
@@ -227,9 +189,9 @@
   <div id="editModal" class="modal-backdrop">
     <div class="modal-dialog">
       <div class="modal-header">
-        <h2 class="modal-title">Kustomisasi Tautan</h2>
-        <button type="button" class="modal-close" data-close-modal="editModal">
-          <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <h2 class="modal-title">Edit Tautan</h2>
+        <button type="button" class="modal-close-btn" data-close-modal="editModal" aria-label="Tutup">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
@@ -237,9 +199,9 @@
       <form id="editForm">
         <input type="hidden" id="editLinkId" />
         <div class="modal-body">
-          <div class="form-group">
-            <label for="editSlug" class="form-label">Slug Kustom</label>
-            <div class="input-group">
+          <div class="form-group" style="margin-bottom: 0.85rem;">
+            <label for="editSlug" class="form-label">Slug</label>
+            <div class="input-prefix-group">
               <span class="input-prefix">/</span>
               <input
                 type="text"
@@ -250,11 +212,10 @@
                 autocomplete="off"
               />
             </div>
-            <span class="text-dim" style="font-size: 0.75rem;">Mengubah slug akan memperbarui URL pendek yang dibagikan.</span>
           </div>
 
-          <div class="form-group">
-            <label for="editUrl" class="form-label">URL Tujuan Asli</label>
+          <div class="form-group" style="margin-bottom: 0.85rem;">
+            <label for="editUrl" class="form-label">URL Tujuan</label>
             <input
               type="url"
               id="editUrl"
@@ -264,84 +225,72 @@
             />
           </div>
 
-          <div class="form-group" style="margin-bottom: 0;">
-            <label for="editTitle" class="form-label">Judul Referensi (Opsional)</label>
+          <div class="form-group">
+            <label for="editTitle" class="form-label">Catatan Label (Opsional)</label>
             <input
               type="text"
               id="editTitle"
               class="form-input"
-              placeholder="Contoh: Dokumen Portofolio 2026"
+              placeholder="Contoh: Dokumen rilis"
               maxlength="120"
               autocomplete="off"
             />
           </div>
 
-          <div id="editErrorMsg" style="display: none; color: #f87171; font-size: 0.8rem; margin-top: 0.75rem;"></div>
+          <div id="editErrorMsg" style="display: none; color: #f87171; font-size: 0.8rem; margin-top: 0.65rem;"></div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-close-modal="editModal">Batal</button>
-          <button type="submit" id="btnEditSubmit" class="btn btn-primary">
-            <span>Simpan Perubahan</span>
-          </button>
+          <button type="button" class="btn btn-secondary btn-sm" data-close-modal="editModal">Batal</button>
+          <button type="submit" id="btnEditSubmit" class="btn btn-primary btn-sm">Simpan</button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- Delete Confirmation Modal -->
+  <!-- Delete Modal -->
   <div id="deleteModal" class="modal-backdrop">
     <div class="modal-dialog">
       <div class="modal-header">
         <h2 class="modal-title" style="color: #f87171;">Hapus Tautan</h2>
-        <button type="button" class="modal-close" data-close-modal="deleteModal">
-          <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <button type="button" class="modal-close-btn" data-close-modal="deleteModal" aria-label="Tutup">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
       </div>
       <div class="modal-body">
         <input type="hidden" id="deleteLinkId" />
-        <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 0.75rem;">
-          Apakah Anda yakin ingin menghapus tautan <code id="deleteLinkSlug" class="font-mono text-accent" style="padding: 0.15rem 0.4rem; background: rgba(16,185,129,0.1); border-radius: 4px;"></code>?
+        <p class="text-secondary" style="font-size: 0.85rem; margin-bottom: 0.5rem;">
+          Apakah Anda yakin ingin menghapus tautan <code id="deleteLinkSlug" class="font-mono" style="color: var(--accent);"></code>?
         </p>
-        <p class="text-dim" style="font-size: 0.8rem;">
-          Tindakan ini tidak dapat dibatalkan. Pengunjung yang mengakses tautan pendek ini setelahnya akan menerima halaman Error 404.
+        <p class="text-muted" style="font-size: 0.775rem;">
+          Tautan ini tidak akan dapat diakses kembali oleh pengunjung dan akan mengembalikan status 404.
         </p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-close-modal="deleteModal">Batal</button>
-        <button type="button" id="btnConfirmDelete" class="btn btn-danger">
-          <span>Hapus Sekarang</span>
-        </button>
+        <button type="button" class="btn btn-secondary btn-sm" data-close-modal="deleteModal">Batal</button>
+        <button type="button" id="btnConfirmDelete" class="btn btn-danger btn-sm">Hapus</button>
       </div>
     </div>
   </div>
 
   <!-- QR Code Modal -->
   <div id="qrModal" class="modal-backdrop">
-    <div class="modal-dialog" style="max-width: 400px; text-align: center;">
+    <div class="modal-dialog" style="max-width: 360px; text-align: center;">
       <div class="modal-header">
-        <h2 class="modal-title">Kode QR Tautan</h2>
-        <button type="button" class="modal-close" data-close-modal="qrModal">
-          <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <h2 class="modal-title">QR Code</h2>
+        <button type="button" class="modal-close-btn" data-close-modal="qrModal" aria-label="Tutup">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
       </div>
       <div class="modal-body">
-        <p id="qrSlugDisplay" class="font-mono text-accent" style="font-weight: 600; margin-bottom: 0.75rem; word-break: break-all;"></p>
-        <div id="qrContainer" class="qr-preview-box">
-          <!-- SVG rendered here -->
-        </div>
-        <p class="text-dim" style="font-size: 0.8rem;">Pindai kode QR di atas menggunakan kamera ponsel Anda.</p>
+        <p id="qrSlugDisplay" class="font-mono text-secondary" style="font-size: 0.85rem; margin-bottom: 0.5rem; word-break: break-all;"></p>
+        <div id="qrContainer" class="qr-render-box"></div>
       </div>
       <div class="modal-footer" style="justify-content: center;">
-        <button type="button" id="btnDownloadQr" class="btn btn-primary btn-sm">
-          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-          </svg>
-          <span>Unduh SVG</span>
-        </button>
+        <button type="button" id="btnDownloadQr" class="btn btn-primary btn-sm">Unduh SVG</button>
         <button type="button" class="btn btn-secondary btn-sm" data-close-modal="qrModal">Tutup</button>
       </div>
     </div>
@@ -353,12 +302,8 @@
   <!-- Footer -->
   <footer class="site-footer">
     <div class="container footer-inner">
-      <div>
-        <span>KlipLink &copy; 2026. Berjalan di Cloudflare Workers Edge.</span>
-      </div>
-      <div>
-        <span class="text-dim">Cepat, Terdistribusi, &amp; Bebas Pelacak Pihak Ketiga.</span>
-      </div>
+      <span>KlipLink. Cloudflare Workers &amp; D1 Database.</span>
+      <span class="text-muted">Aplikasi Mandiri. Tanpa Pelacak Pihak Ketiga.</span>
     </div>
   </footer>
 
