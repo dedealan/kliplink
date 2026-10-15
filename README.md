@@ -10,13 +10,13 @@ Dilengkapi dengan dasbor manajemen admin terlindungi kata sandi untuk melihat se
 
 Klik tombol di bawah ini untuk langsung menerapkan KlipLink ke akun Cloudflare Anda secara otomatis:
 
-[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/dedealan/shortlink-worker)
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/dedealan/kliplink)
 
-> **Catatan:** Ganti `dedealan/shortlink-worker` dengan repository GitHub Anda sendiri jika Anda telah melakukan fork atau clone repository ini.
+> **Catatan:** Ganti `dedealan/kliplink` dengan repository GitHub Anda sendiri jika Anda telah melakukan fork atau clone repository ini.
 
 Saat Anda menekan tombol di atas, Cloudflare akan secara otomatis:
 1. Menyalin (clone) repository ke akun GitHub Anda.
-2. Membuat database Cloudflare D1 bernama `shortlink-db`.
+2. Membuat database Cloudflare D1 bernama `kliplink-db`.
 3. Membangun aplikasi menggunakan Cloudflare Workers Builds.
 4. Menerapkan Worker ke seluruh jaringan edge Cloudflare global.
 
@@ -34,7 +34,7 @@ Saat Anda menekan tombol di atas, Cloudflare akan secara otomatis:
 - **Kustom Slug atau Otomatis:** Buat tautan dengan slug kustom (contoh: `/promo-hebat`) atau biarkan sistem membuat kode pendek acak secara otomatis.
 - **Generator Kode QR Instan:** Setiap tautan pendek dilengkapi kode QR berformat SVG yang tajam dan dapat diunduh langsung untuk materi promosi cetak maupun digital.
 - **Pencarian & Pengurutan Real-Time:** Filter tautan berdasarkan slug atau URL tujuan, serta urutkan berdasarkan tautan terbaru, terlama, klik terbanyak, atau klik tersedikit.
-- **Desain Editorial Modern:** Antarmuka gelap bernuansa Linear/Geist dengan aksen Electric Emerald, umpan balik taktil saat tombol ditekan, dan status indikator interaktif tanpa elemen lambat pihak ketiga.
+- **Desain Workbench Solid:** Antarmuka gelap bersih, konsisten, dan bebas elemen AI slop dengan waktu muat instan tanpa pelacak pihak ketiga.
 
 ---
 
@@ -60,8 +60,8 @@ Anda dapat menyesuaikan konfigurasi pada file `wrangler.json` atau melalui menu 
 
 ### 2. Instalasi Dependensi
 ```bash
-git clone https://github.com/dedealan/shortlink-worker.git
-cd shortlink-worker
+git clone https://github.com/dedealan/kliplink.git
+cd kliplink
 npm install
 ```
 
@@ -81,7 +81,7 @@ Buka peramban Anda di `http://127.0.0.1:8787`. Worker dan database D1 akan disim
 ```bash
 npm test
 ```
-Seluruh 6 skenario pengujian unit dan integrasi akan dijalankan menggunakan runner pengujian Node.js.
+Seluruh skenario pengujian unit dan integrasi akan dijalankan menggunakan runner pengujian Node.js.
 
 ### 6. Pengecekan Tipe TypeScript
 ```bash
@@ -101,14 +101,14 @@ npx wrangler login
 
 ### 2. Buat Database D1
 ```bash
-npx wrangler d1 create shortlink-db
+npx wrangler d1 create kliplink-db
 ```
 Salin `database_id` yang dihasilkan dari terminal, lalu perbarui nilai `database_id` pada file `wrangler.json`:
 ```json
 "d1_databases": [
   {
     "binding": "DB",
-    "database_name": "shortlink-db",
+    "database_name": "kliplink-db",
     "database_id": "<MASUKKAN_DATABASE_ID_ANDA_DI_SINI>"
   }
 ]
@@ -131,14 +131,14 @@ npx wrangler secret put SESSION_SECRET
 npm run deploy
 ```
 
-Worker Anda akan langsung aktif dengan URL bawaan `https://shortlink-worker.<subdomain>.workers.dev` atau domain kustom yang Anda hubungkan.
+Worker Anda akan langsung aktif dengan URL bawaan `https://kliplink.<subdomain>.workers.dev` atau domain kustom yang Anda hubungkan.
 
 ---
 
 ## Struktur Proyek
 
 ```
-shortlink-worker/
+kliplink/
 ├── public/                 # Aset frontend statis (HTML, CSS, JS, Favicon)
 │   ├── app.js              # Logika interaktif dasbor, auth, dan salin tautan
 │   ├── favicon.svg         # Ikon vektor aplikasi

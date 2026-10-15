@@ -361,7 +361,7 @@ test("Worker: Admin Link Management (List, Edit, Delete, Stats)", async () => {
       },
       body: JSON.stringify({
         slug: "git-updated",
-        url: "https://github.com/dedealan/shortlink-worker",
+        url: "https://github.com/dedealan/kliplink",
         title: "Updated Repo",
       }),
     }),
@@ -371,12 +371,12 @@ test("Worker: Admin Link Management (List, Edit, Delete, Stats)", async () => {
   assert.equal(editRes.status, 200);
   const editData = (await editRes.json()) as LinkCreateResult;
   assert.equal(editData.link.slug, "git-updated");
-  assert.equal(editData.link.url, "https://github.com/dedealan/shortlink-worker");
+  assert.equal(editData.link.url, "https://github.com/dedealan/kliplink");
 
   // Verify redirection uses updated slug
   const updatedRedirect = await worker.fetch(new Request("https://link.test/git-updated"), env, ctx);
   assert.equal(updatedRedirect.status, 302);
-  assert.equal(updatedRedirect.headers.get("Location"), "https://github.com/dedealan/shortlink-worker");
+  assert.equal(updatedRedirect.headers.get("Location"), "https://github.com/dedealan/kliplink");
 
   // Old slug should now 404
   const oldRedirect = await worker.fetch(new Request("https://link.test/github"), env, ctx);

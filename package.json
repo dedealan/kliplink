@@ -1,5 +1,5 @@
 {
-  "name": "shortlink-worker",
+  "name": "kliplink",
   "version": "1.0.0",
   "description": "Fast, sleek shortlink web service running on Cloudflare Workers and D1 database",
   "type": "module",
@@ -7,7 +7,7 @@
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
     "typecheck": "tsc --noEmit",
-    "db:init": "wrangler d1 execute shortlink-db --file=./schema.sql",
+    "db:init": "wrangler d1 execute kliplink-db --file=./schema.sql",
     "test": "node --test --experimental-strip-types tests/worker.test.ts"
   },
   "keywords": [
