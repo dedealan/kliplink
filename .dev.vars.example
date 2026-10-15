@@ -1,0 +1,3 @@
+# Environment variables & secrets for Cloudflare Worker
+ADMIN_PASSWORD=admin123
+SESSION_SECRET=super-secret-random-key-change-this-in-production

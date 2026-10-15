@@ -1,0 +1,24 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "shortlink-worker",
+  "main": "src/index.ts",
+  "compatibility_date": "2024-10-15",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "run_worker_first": true
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "shortlink-db",
+      "database_id": "shortlink-db-placeholder"
+    }
+  ],
+  "vars": {
+    "APP_NAME": "KlipLink",
+    "ADMIN_USERNAME": "admin",
+    "REQUIRE_AUTH_TO_CREATE": "false"
+  }
+}

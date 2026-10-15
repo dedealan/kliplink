@@ -1,0 +1,32 @@
+{
+  "name": "shortlink-worker",
+  "version": "1.0.0",
+  "description": "Fast, sleek shortlink web service running on Cloudflare Workers and D1 database",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "typecheck": "tsc --noEmit",
+    "db:init": "wrangler d1 execute shortlink-db --file=./schema.sql",
+    "test": "node --test --experimental-strip-types tests/worker.test.ts"
+  },
+  "keywords": [
+    "cloudflare",
+    "cloudflare-workers",
+    "shortlink",
+    "url-shortener",
+    "d1-database"
+  ],
+  "author": "dedealan",
+  "license": "MIT",
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20241022.0",
+    "@types/node": "^26.6.5",
+    "tsx": "^4.23.15",
+    "typescript": "^5.6.3",
+    "wrangler": "^3.83.0"
+  },
+  "dependencies": {
+    "uqr": "^0.1.3"
+  }
+}
