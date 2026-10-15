@@ -100,9 +100,15 @@
     <section id="adminSection" style="display: none;">
       <!-- Default Password Warning -->
       <div id="defaultPasswordBanner" class="security-banner" style="display: none;">
-        <strong>Pemberitahuan:</strong> Sandi admin masih menggunakan nilai default <code class="font-mono">admin123</code>. Perbarui variabel rahasia <code class="font-mono">ADMIN_PASSWORD</code> melalui Cloudflare Dashboard atau wrangler secret.
+        <div style="flex: 1;">
+          <strong>Pemberitahuan:</strong> Sandi admin masih menggunakan nilai default <code class="font-mono">admin123</code>. Perbarui variabel rahasia <code class="font-mono">ADMIN_PASSWORD</code> melalui Cloudflare Dashboard atau wrangler secret.
+        </div>
+        <button type="button" id="btnDismissBanner" class="modal-close-btn" aria-label="Tutup pemberitahuan" style="color: #fbbf24; flex-shrink: 0;">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
       </div>
-
       <!-- Links Workbench Table -->
       <div class="workbench">
         <div class="workbench-header">

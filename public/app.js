@@ -73,12 +73,18 @@ async function copyToClipboard(text, successMsg = "Tautan berhasil disalin") {
 
 function openModal(modalId) {
   const modal = document.getElementById(modalId);
-  if (modal) modal.style.display = "flex";
+  if (modal) {
+    modal.style.display = "flex";
+    document.body.style.overflow = "hidden";
+  }
 }
 
 function closeModal(modalId) {
   const modal = document.getElementById(modalId);
-  if (modal) modal.style.display = "none";
+  if (modal) {
+    modal.style.display = "none";
+    document.body.style.overflow = "";
+  }
 }
 
 document.querySelectorAll("[data-close-modal]").forEach((btn) => {
@@ -90,7 +96,10 @@ document.querySelectorAll("[data-close-modal]").forEach((btn) => {
 
 document.querySelectorAll(".modal-backdrop").forEach((backdrop) => {
   backdrop.addEventListener("click", (e) => {
-    if (e.target === backdrop) backdrop.style.display = "none";
+    if (e.target === backdrop) {
+      backdrop.style.display = "none";
+      document.body.style.overflow = "";
+    }
   });
 });
 
@@ -99,9 +108,14 @@ window.addEventListener("keydown", (e) => {
     document.querySelectorAll(".modal-backdrop").forEach((m) => {
       m.style.display = "none";
     });
+    document.body.style.overflow = "";
   }
 });
 
+document.getElementById("btnDismissBanner")?.addEventListener("click", () => {
+  const banner = document.getElementById("defaultPasswordBanner");
+  if (banner) banner.style.display = "none";
+});
 async function checkAuthStatus() {
   try {
     const res = await fetch("/api/auth/me");
